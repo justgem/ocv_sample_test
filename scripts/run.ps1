@@ -1,11 +1,15 @@
 $EnvFile = ".env"
 if (Test-Path $EnvFile) {
   Get-Content $EnvFile | ForEach-Object {
-    if ($_ -match "^") {
-      $pair = $_ -split "=", 2
-      if ($pair.Length -eq 2) {
-        [System.Environment]::SetEnvironmentVariable($pair[0], $pair[1])
-      }
+    $line = $_.Trim()
+    if ($line -eq "" -or $line.StartsWith("#")) {
+      return
+    }
+    $pair = $line -split "=", 2
+    if ($pair.Length -eq 2) {
+      $key = $pair[0].Trim()
+      $value = $pair[1].Trim()
+      [System.Environment]::SetEnvironmentVariable($key, $value)
     }
   }
 }

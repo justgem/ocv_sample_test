@@ -9,6 +9,7 @@
    ```powershell
    python -m venv .venv
    .\.venv\Scripts\Activate.ps1
+   python -m pip install -r requirements.txt
    pip install -r requirements.txt
    ```
 3. `.env.example`을 복사하여 `.env` 생성 후 환경 변수 설정
@@ -16,7 +17,14 @@
    Copy-Item .env.example .env
    ```
 4. 실행
+   - PowerShell에서 실행 파일이 메모장으로 열리는 경우가 있으니 반드시 **PowerShell에서 직접 실행**합니다.
    ```powershell
+   # 실행 정책에 막히는 경우 Bypass로 실행
+   powershell -ExecutionPolicy Bypass -File .\scripts\run.ps1
+   ```
+   - 이미 PowerShell 세션 내라면 다음처럼 실행합니다.
+   ```powershell
+   Set-ExecutionPolicy -Scope Process Bypass
    .\scripts\run.ps1
    ```
 5. 방화벽에서 TCP 8000 포트 허용
