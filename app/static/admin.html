@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>Admin</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    section { margin-bottom: 24px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Admin Dashboard</h1>
+  <section>
+    <h2>Ingest Status</h2>
+    <pre id="status"></pre>
+  </section>
+  <section>
+    <h2>Alerts</h2>
+    <pre id="alerts"></pre>
+  </section>
+  <section>
+    <h2>Rules</h2>
+    <pre id="rules"></pre>
+  </section>
+  <section>
+    <h2>Labels</h2>
+    <pre id="labels"></pre>
+  </section>
+
+<script>
+  async function load() {
+    const status = await fetch('/admin/api/status').then(r => r.json());
+    document.getElementById('status').textContent = JSON.stringify(status, null, 2);
+    const alerts = await fetch('/admin/api/alerts').then(r => r.json());
+    document.getElementById('alerts').textContent = JSON.stringify(alerts, null, 2);
+    const rules = await fetch('/admin/api/rules').then(r => r.json());
+    document.getElementById('rules').textContent = JSON.stringify(rules, null, 2);
+    const labels = await fetch('/admin/api/labels').then(r => r.json());
+    document.getElementById('labels').textContent = JSON.stringify(labels, null, 2);
+  }
+  load();
+</script>
+</body>
+</html>
