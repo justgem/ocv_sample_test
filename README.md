@@ -33,6 +33,10 @@
    .\.venv\Scripts\Activate.ps1
    python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
    ```
+   - `No module named uvicorn` 오류가 나면 의존성이 설치되지 않은 상태입니다.
+   ```powershell
+   python -m pip install -r requirements.txt
+   ```
 5. 방화벽에서 TCP 8000 포트 허용
    ```powershell
    New-NetFirewallRule -DisplayName "LogTail 8000" -Direction Inbound -Protocol TCP -LocalPort 8000 -Action Allow
