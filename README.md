@@ -10,6 +10,7 @@
    python -m venv .venv
    .\.venv\Scripts\Activate.ps1
    python -m pip install -r requirements.txt
+   pip install -r requirements.txt
    ```
 3. `.env.example`을 복사하여 `.env` 생성 후 환경 변수 설정
    ```powershell
