@@ -8,9 +8,10 @@
 2. 프로젝트 루트에서 의존성 설치
    ```powershell
    python -m venv .venv
+   # 실행 정책에 막히는 경우 현재 세션만 허용
+   Set-ExecutionPolicy -Scope Process Bypass
    .\.venv\Scripts\Activate.ps1
    python -m pip install -r requirements.txt
-   pip install -r requirements.txt
    ```
 3. `.env.example`을 복사하여 `.env` 생성 후 환경 변수 설정
    ```powershell
@@ -26,6 +27,11 @@
    ```powershell
    Set-ExecutionPolicy -Scope Process Bypass
    .\scripts\run.ps1
+   ```
+   - `uvicorn` 인식 오류가 나면 venv가 활성화되지 않은 상태일 수 있습니다. 다음을 확인하세요.
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
    ```
 5. 방화벽에서 TCP 8000 포트 허용
    ```powershell

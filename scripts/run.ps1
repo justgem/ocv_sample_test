@@ -15,4 +15,10 @@ if (Test-Path $EnvFile) {
 }
 
 Write-Host "Starting server on http://localhost:8000"
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
+
+$PythonExe = "python"
+if (Test-Path ".\\.venv\\Scripts\\python.exe") {
+  $PythonExe = ".\\.venv\\Scripts\\python.exe"
+}
+
+& $PythonExe -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
