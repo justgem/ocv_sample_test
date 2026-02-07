@@ -25,6 +25,11 @@ _conn = _connect()
 @contextmanager
 def db_cursor():
     with _db_lock:
+        global _conn
+        try:
+            _conn.execute("SELECT 1")
+        except sqlite3.Error:
+            _conn = _connect()
         cur = _conn.cursor()
         try:
             yield cur
