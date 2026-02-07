@@ -104,7 +104,7 @@ def ack_alert(alert_id):
 def get_policies():
     with db_cursor() as cur:
         cur.execute("SELECT * FROM alert_policies WHERE enabled = 1")
-    return [dict(row) for row in cur.fetchall()]
+        return [dict(row) for row in cur.fetchall()]
 
 
 def evaluate_policies(status_snapshot):
