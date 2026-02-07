@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>Log Tail Monitor</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    .toolbar { display: flex; gap: 12px; margin-bottom: 12px; }
+    #log { max-height: 600px; overflow: auto; border: 1px solid #ddd; padding: 8px; }
+    .row { border-bottom: 1px solid #eee; padding: 4px 0; }
+    .meta { color: #666; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Log Tail Monitor</h1>
+  <div class="toolbar">
+    <label>device <input id="device" /></label>
+    <label>grp <input id="grp" /></label>
+    <label>file <input id="file" /></label>
+    <label>parse_ok <select id="parse_ok"><option value="">all</option><option value="1">ok</option><option value="0">fail</option></select></label>
+    <label><input id="raw" type="checkbox" /> raw</label>
+  </div>
+  <div id="log"></div>
+
+<script>
+  const logEl = document.getElementById('log');
+  const filters = {
+    device: document.getElementById('device'),
+    grp: document.getElementById('grp'),
+    file: document.getElementById('file'),
+    parse_ok: document.getElementById('parse_ok'),
+    raw: document.getElementById('raw')
+  };
+
+  function appendRow(item) {
+    const row = document.createElement('div');
+    row.className = 'row';
+    const showRaw = filters.raw.checked;
+    row.innerHTML = `<div>${showRaw ? item.raw_line : JSON.stringify(item.values || [])}</div>` +
+      `<div class="meta">${item.file_path || ''} | ${item.device || ''} | grp ${item.grp || ''} | parse_ok ${item.parse_ok}</div>`;
+    logEl.prepend(row);
+    while (logEl.children.length > 2000) {
+      logEl.removeChild(logEl.lastChild);
+    }
+  }
+
+  function matchFilter(item) {
+    if (filters.device.value && item.device !== filters.device.value) return false;
+    if (filters.grp.value && String(item.grp) !== filters.grp.value) return false;
+    if (filters.file.value && item.file_path !== filters.file.value) return false;
+    if (filters.parse_ok.value && String(item.parse_ok) !== filters.parse_ok.value) return false;
+    return true;
+  }
+
+  function connectSSE() {
+    const es = new EventSource('/api/stream');
+    es.onmessage = (event) => {
+      const item = JSON.parse(event.data);
+      if (matchFilter(item)) appendRow(item);
+    };
+    es.onerror = () => {
+      es.close();
+      setTimeout(fetchSnapshot, 10000);
+    };
+  }
+
+  async function fetchSnapshot() {
+    const res = await fetch('/api/events');
+    const data = await res.json();
+    data.reverse().forEach(item => {
+      if (matchFilter(item)) appendRow(item);
+    });
+    connectSSE();
+  }
+
+  fetchSnapshot();
+</script>
+</body>
+</html>
