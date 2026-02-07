@@ -23,7 +23,10 @@ stop_event = threading.Event()
 
 def _alert_loop():
     while not stop_event.is_set():
-        alerts.evaluate_policies(get_status_snapshot())
+        try:
+            alerts.evaluate_policies(get_status_snapshot())
+        except Exception as exc:
+            alerts.record_db_error(exc)
         time.sleep(5)
 
 
